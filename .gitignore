@@ -1,0 +1,30 @@
+# --- Rust (backend) ---
+/backend/target/
+**/target/
+
+# --- Node / Vite (frontend) ---
+node_modules/
+/frontend/dist/
+/frontend/.vite/
+
+# --- Env / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Docker ---
+# (compose override for local tweaks)
+docker-compose.override.yml
+
+# --- Claude Code (local-only settings) ---
+.claude/settings.local.json
+
+# --- Editor / OS ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
