@@ -96,6 +96,8 @@ dev-docs/
 ▶ 説明: 承認済み計画に沿って、恒久ルール(CLAUDE.md)・決定記録の仕組み・**セッションログの仕組み**・スキル・フックを作る。ここで `/log-session` スキルが用意され、以降のログはこれで残せる。
 
 ```
+まず状態を把握してから始めてください（新しいセッションでの取りこぼし防止）: dev-docs/foundation-plan.md と dev-docs/requirements-analysis.md、dev-docs/session-logs/ の最新ファイル、あれば dev-docs/reviews/ を読む。
+
 承認済みの dev-docs/foundation-plan.md に従い、実装前の開発基盤一式を構築します。1論理単位ずつ作成し、git commit は私が明示的に指示するまで一切行わないこと。
 
 ディレクトリ方針:
@@ -126,6 +128,8 @@ dev-docs/
 ▶ 説明: 「ここを外すと評価で落ちる」点を基盤に固定し、最後にStopフックとセッションログが実際に効くか確認する。
 
 ```
+まず状態を把握してから始めてください（新しいセッションでの取りこぼし防止）: CLAUDE.md、dev-docs/foundation-plan.md、dev-docs/session-logs/ の最新ファイル、dev-docs/decisions/README.md を読む。
+
 評価ハーネスに適合するための基盤の作り込みと、フックの動作確認を行います。アプリ本体の実装にはまだ入りません。
 
 1. README駆動のsetup/起動: 評価者は「README.md を読んで初回セットアップせよ」「README.md を読んでアプリを起動せよ」という固定プロンプトでこのプロジェクトを動かす。README.md を起点に辿れる形で、セットアップ手順と起動手順のドキュメント(置き場所は dev-docs/ 配下でよい)を用意する方針を決め、その方針を /log-decision で記録する。README.md への追記が必要な場合は、人が書いた仕様の趣旨を壊さない「手順への参照追加」の範囲にとどめ、判断に迷えば私に確認する。
