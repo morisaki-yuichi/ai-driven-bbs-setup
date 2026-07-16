@@ -186,7 +186,7 @@ dev-docs/
 対象: <dev-docs/requirements-analysis.md（フェーズ0）／ dev-docs/foundation-plan.md（フェーズ1）など、レビュー対象ファイルのパス>
 
 手順:
-1. まず docs/ 配下（README.md と guide/ product/ evaluation/）＝人が書いた仕様を読む。次に対象ファイルを読む。
+1. まず人が書いた仕様を読む: リポジトリ直下の README.md と、docs/ 配下（guide/ product/ evaluation/）。次に対象ファイルを読む。
 2. 仕様から、あなた自身で要点（要件・制約・論点）を独立に再導出し、対象ファイルとの差分を洗い出す。対象ファイルの主張を鵜呑みにしないこと。
 3. 以下を敵対的に点検する:
    - 仕様の読み違い・取りこぼした制約・受け入れ基準(AC)やテストシナリオ01〜05との齟齬。
