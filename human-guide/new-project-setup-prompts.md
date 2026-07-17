@@ -252,10 +252,11 @@ Tier 2 — 二次/タイブレーク
 3. CLAUDE.md（リポジトリ直下・恒久ルール）: プロジェクト概要／確定スタック（foundation-plan・0001 から転記）／主要コマンド／TDD(Red→Green→Refactor)／実装方針／意図の置き場所／Definition of Done／決定記録ルール／セッションログ記録ルール（全フェーズ毎回）／UI-UX必須要件／セキュリティ必須要件(XSS・CSRF・SQLインジェクション対策・パスワードハッシュ・セッション失効)／やってはいけないこと。
    - **実装方針（Action/Calculation/Data の分離）**: ロジックは純粋な計算(Calculation: 入力→出力・副作用なし・決定的)に寄せて単体テストで厚く固め、副作用(Action: DB/セッション/HTTP/時刻/乱数)は薄く隔離する（functional core / imperative shell）。Data(出来事の事実)は型/構造体で表す。※単純CRUDに過剰な層・間接を作らない“既定の型”として書く（強制の分類ではない）。純粋な核を厚くすることで、高コストな agent-browser E2E への依存を減らす。
    - **意図の置き場所（How/What/Why/Why-not）**: コード=How／テスト=What（振る舞いの仕様）／コミット本文=Why（大きな Why は decision に委ねて参照・重複させない）／コメント=Why・Why-not（非自明な理由・却下した代替。**How の再説明は書かない**。公開APIの doc コメント・不変条件・警告は別枠で可）。排他ルールでなく“どこに何を置くか”の指針。
+   - **人間オペレータ用ディレクトリの除外**: `human-guide/`（人間向けの手順書・技術選定/実装原則の根拠資料）は AI が**読み込み・編集しない**旨を「やってはいけないこと／参照方針」に明記する。プロジェクトの正典でも作業対象でもない（要件は docs/、作業文書は dev-docs/ を参照）。
    - 開発ルールを恒久ルールとして必ず含める: 人間はソースコード・git・docs/ を編集しない。開発・デバッグ・git操作はすべてAIが行う。AIが詰まって人がデバッグした場合は、原因と解決策のフィードバックを受け、再発防止のためルール/スキル/ドキュメントに反映する。
    - dev-docs/ 各ファイルの参照方法を明記（UI作業前に ui-ux-guidelines を読む等）。
 4. dev-docs/workflow.md（main保護・機能ごと短命ブランチ・1論理変更1コミット・Conventional Commits＋関連decision参照・コミットはユーザー承認後。**コミットはヘッダ=簡潔なWhat／本文=Why・大きなWhyはdecision参照で重複させない／コメント=Why・Why-notでHowの再説明はしない／テスト=What(振る舞いの仕様)** を明記）と dev-docs/ui-ux-guidelines.md（状態網羅・送信中/成功/失敗フィードバック・クライアント+サーバの二重バリデーション・a11y・レスポンシブ・agent-browserで操作可能=隠し要素にアクションを強いない）。
-5. .claude/settings.json: 安全な定型コマンド（git status/diff/add、選定スタックのテスト・lint・ビルド、docker compose、DBマイグレーション等）の allow。Stopフック（実装ソース変更があるセッションで decision 記録 or「記録不要」の明示を促すソフトリマインダ。stop_hook_active で1回のみ、恒久ブロックにしない）。MCP は context7（ライブラリ最新ドキュメント）と、UI検証に使うブラウザ操作系を有効化。
+5. .claude/settings.json: 安全な定型コマンド（git status/diff/add、選定スタックのテスト・lint・ビルド、docker compose、DBマイグレーション等）の allow。Stopフック（実装ソース変更があるセッションで decision 記録 or「記録不要」の明示を促すソフトリマインダ。stop_hook_active で1回のみ、恒久ブロックにしない）。MCP は context7（ライブラリ最新ドキュメント）と、UI検証に使うブラウザ操作系を有効化。また permissions.deny に `Read(./human-guide/**)` を入れ、人間オペレータ用資料を AI が開かないようにする（belt-and-suspenders）。
 
 各ファイル作成後、何を作ったか報告し、次に進んでよいか確認を取ってください。最後に、作成した /log-session でこのセッション（フェーズ2）のログを残してください。
 ```
@@ -406,4 +407,5 @@ dev-docs の成果物を修正・改訂します。
 - **状態復元**: フェーズごと・機能ごとに新セッションで始めてよい。各フェーズ/実装プロンプトの冒頭で、CLAUDE.md・最新セッションログ・decisions・上流成果物を読ませてから作業に入る。
 - **実装の2原則**（CLAUDE.md／workflow／実装プロンプトに反映済み）: ①Action/Calculation/Data を分け、純粋な計算に寄せて副作用を薄く隔離（functional core / imperative shell。決定的な核はTDDと非決定性制御に直結）。②意図の置き場所＝コード:How／テスト:What／コミット本文:Why(decision参照)／コメント:Why・Why-not(Howを繰り返さない)。いずれも強制の法でなく“既定の型”。
 - **`dev-docs` の名前**を変える場合は全プロンプトで一括置換する。**`docs/` 不可侵**と**セッションログの別系統化**がこの手順の肝。
+- **このファイル群の置き場所**: 本手順書・`tech-selection-rationale.md`・`implementation-principles.md`・索引 `README.md` は、新プロジェクトでは `docs/`（仕様）でも `dev-docs/`（AI作業物）でもない第3のディレクトリ **`human-guide/`（人間オペレータ専用）** にまとめて置く。AIは読まない（CLAUDE.md の除外＋settings.json の `permissions.deny`）。人間は自由に編集してよい。
 ```
