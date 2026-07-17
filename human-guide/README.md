@@ -24,8 +24,9 @@
 | [`new-project-setup-prompts.md`](./new-project-setup-prompts.md) | 手順書（what） | フェーズ0〜3の基盤構築＋実装フェーズの、そのまま貼れる指示プロンプト集。レビュー/反映・セッションログ・状態復元まで | プロジェクトを実際に進めるとき（各プロンプトをコピペ） |
 | [`tech-selection-rationale.md`](./tech-selection-rationale.md) | 根拠（why） | 技術選定軸（Tier 0〜2、A=relevant shift-left / B=残余反復摩擦）の考え方と、その定義にした理由 | スタックを選ぶとき・選定軸の意図を確かめたいとき |
 | [`implementation-principles.md`](./implementation-principles.md) | 根拠（why） | 実装2原則（Action/Calculation/Data 分離、意図の置き場所 How/What/Why/Why-not）の出典・詳細 | 実装方針を深掘りしたいとき |
+| [`lean-formalization.md`](./lean-formalization.md) | 任意の学習トラック | 仕様を Lean で形式化（状態機械のモデル化＋不変条件の証明）する範囲・進め方 | 形式手法を学びたい／仕様を厳密化したいとき（任意） |
 
-「手順書＝何をするか(what)」「根拠2つ＝なぜそうするか(why)」の関係。
+「手順書＝何をするか(what)」「根拠2つ＝なぜそうするか(why)」が本線。`lean-formalization.md` は必須ではない**任意の学習トラック**。
 
 ## 使い方（最短の流れ）
 
