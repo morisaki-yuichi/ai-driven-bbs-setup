@@ -130,6 +130,10 @@ dev-docs/
 5. 反映した項目／見送った項目（理由つき）を一覧で報告し、変更点を差分として要約する。最後にセッションログ（フェーズ0）を残してください。
 ```
 
+### （任意）Lean 形式化トラック ①（フェーズ0直後）
+
+▶ 説明: 任意の学習トラック。フェーズ0の成果が固まったこの時点で、仕様を Lean で“軽く”形式化すると、未規定点（コメント数に削除済みを含むか等）が機械的に露出する。露出した論点は「修正/上流改訂プロンプト」で `requirements-analysis.md` に反映＋ `dev-docs/decisions/` に起票する（証明の完遂はここではしない）。**貼るプロンプトと範囲は `human-guide/lean-formalization.md`（§5 ①・スターター指示例）を参照**。Lean 成果物は AI が書く領域なのでトップレベル `formal/` に置く（`docs/`・`dev-docs/`・`human-guide/` とは別）。やらなくても本線は成立する。
+
 ---
 
 ## フェーズ1 — 技術選定＋基盤計画＋decision 0001
@@ -333,7 +337,7 @@ Tier 2 — 二次/タイブレーク
 
 ## 実装フェーズ（フェーズ3完了後）— 機能を1つずつTDDで作る
 
-▶ 説明: セットアップ後はここに入る。毎セッション「①開始＝状態復元 → ②1機能を実装 →（必要なら `/code-review`・`/security-review`）→ 運用プロンプトでログ」を回す。実装対象は docs/product/issues/、合格基準は docs/evaluation/scenarios/。依存順に進める（認証 01→02→03 を先に、その後スレッド/コメント/検索・ソート/プロフィール）。
+▶ 説明: セットアップ後はここに入る。毎セッション「①開始＝状態復元 → ②1機能を実装 →（必要なら `/code-review`・`/security-review`）→ 運用プロンプトでログ」を回す。実装対象は docs/product/issues/、合格基準は docs/evaluation/scenarios/。依存順に進める（認証 01→02→03 を先に、その後スレッド/コメント/検索・ソート/プロフィール）。（任意）Lean 形式化トラックを採る場合は、機能実装の前に対応する不変条件を証明する②を挟む（範囲・プロンプトは `human-guide/lean-formalization.md` §5 ②）。
 
 ### 実-A セッション開始プロンプト（状態復元 / 毎セッション最初）
 
@@ -407,5 +411,6 @@ dev-docs の成果物を修正・改訂します。
 - **状態復元**: フェーズごと・機能ごとに新セッションで始めてよい。各フェーズ/実装プロンプトの冒頭で、CLAUDE.md・最新セッションログ・decisions・上流成果物を読ませてから作業に入る。
 - **実装の2原則**（CLAUDE.md／workflow／実装プロンプトに反映済み）: ①Action/Calculation/Data を分け、純粋な計算に寄せて副作用を薄く隔離（functional core / imperative shell。決定的な核はTDDと非決定性制御に直結）。②意図の置き場所＝コード:How／テスト:What／コミット本文:Why(decision参照)／コメント:Why・Why-not(Howを繰り返さない)。いずれも強制の法でなく“既定の型”。
 - **`dev-docs` の名前**を変える場合は全プロンプトで一括置換する。**`docs/` 不可侵**と**セッションログの別系統化**がこの手順の肝。
-- **このファイル群の置き場所**: 本手順書・`tech-selection-rationale.md`・`implementation-principles.md`・索引 `README.md` は、新プロジェクトでは `docs/`（仕様）でも `dev-docs/`（AI作業物）でもない第3のディレクトリ **`human-guide/`（人間オペレータ専用）** にまとめて置く。AIは読まない（CLAUDE.md の除外＋settings.json の `permissions.deny`）。人間は自由に編集してよい。
+- **このファイル群の置き場所**: 本手順書・`tech-selection-rationale.md`・`implementation-principles.md`・`lean-formalization.md`・索引 `README.md` は、新プロジェクトでは `docs/`（仕様）でも `dev-docs/`（AI作業物）でもない第3のディレクトリ **`human-guide/`（人間オペレータ専用）** にまとめて置く。AIは読まない（CLAUDE.md の除外＋settings.json の `permissions.deny`）。人間は自由に編集してよい。
+- **（任意）Lean 形式化トラック**: 必須ではない学習トラック。手順・範囲・貼るプロンプトは `human-guide/lean-formalization.md` に一元化（本手順書は節目で指し示すだけ）。タイミングは①フェーズ0直後（仕様の抜け出し→decision化）＋②実装フェーズ（機能ごとの証明＋テストオラクル）の二段。Lean 成果物はトップレベル **`formal/`**（AIが読み書きする領域。`human-guide/` の AI除外とは別扱い）に置く。
 ```
