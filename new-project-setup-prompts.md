@@ -249,10 +249,12 @@ Tier 2 — 二次/タイブレーク
 作成物:
 1. .claude/skills/log-decision/: TEMPLATE に沿って連番採番・frontmatter付与・decisions/README.md 索引更新まで一貫して行う決定記録スキル。引数で importance と decided_by を受ける。
 2. .claude/skills/log-session/: セッション終了時に、その回の要約を dev-docs/session-logs/ に1ファイル（ファイル名 <日付>-<連番>-<スラッグ>.md）として作成するスキル。内容は「フェーズ／今回やったこと／決めたこと(関連decision番号)／次にやること／未解決事項」。決定記録(dev-docs/decisions/)とは別系統である旨を明記。フェーズ0・1で手書きしたログがあれば同形式に揃える。
-3. CLAUDE.md（リポジトリ直下・恒久ルール）: プロジェクト概要／確定スタック（foundation-plan・0001 から転記）／主要コマンド／TDD(Red→Green→Refactor)／Definition of Done／決定記録ルール／セッションログ記録ルール（全フェーズ毎回）／UI-UX必須要件／セキュリティ必須要件(XSS・CSRF・SQLインジェクション対策・パスワードハッシュ・セッション失効)／やってはいけないこと。
+3. CLAUDE.md（リポジトリ直下・恒久ルール）: プロジェクト概要／確定スタック（foundation-plan・0001 から転記）／主要コマンド／TDD(Red→Green→Refactor)／実装方針／意図の置き場所／Definition of Done／決定記録ルール／セッションログ記録ルール（全フェーズ毎回）／UI-UX必須要件／セキュリティ必須要件(XSS・CSRF・SQLインジェクション対策・パスワードハッシュ・セッション失効)／やってはいけないこと。
+   - **実装方針（Action/Calculation/Data の分離）**: ロジックは純粋な計算(Calculation: 入力→出力・副作用なし・決定的)に寄せて単体テストで厚く固め、副作用(Action: DB/セッション/HTTP/時刻/乱数)は薄く隔離する（functional core / imperative shell）。Data(出来事の事実)は型/構造体で表す。※単純CRUDに過剰な層・間接を作らない“既定の型”として書く（強制の分類ではない）。純粋な核を厚くすることで、高コストな agent-browser E2E への依存を減らす。
+   - **意図の置き場所（How/What/Why/Why-not）**: コード=How／テスト=What（振る舞いの仕様）／コミット本文=Why（大きな Why は decision に委ねて参照・重複させない）／コメント=Why・Why-not（非自明な理由・却下した代替。**How の再説明は書かない**。公開APIの doc コメント・不変条件・警告は別枠で可）。排他ルールでなく“どこに何を置くか”の指針。
    - 開発ルールを恒久ルールとして必ず含める: 人間はソースコード・git・docs/ を編集しない。開発・デバッグ・git操作はすべてAIが行う。AIが詰まって人がデバッグした場合は、原因と解決策のフィードバックを受け、再発防止のためルール/スキル/ドキュメントに反映する。
    - dev-docs/ 各ファイルの参照方法を明記（UI作業前に ui-ux-guidelines を読む等）。
-4. dev-docs/workflow.md（main保護・機能ごと短命ブランチ・1論理変更1コミット・Conventional Commits＋関連decision参照・コミットはユーザー承認後）と dev-docs/ui-ux-guidelines.md（状態網羅・送信中/成功/失敗フィードバック・クライアント+サーバの二重バリデーション・a11y・レスポンシブ・agent-browserで操作可能=隠し要素にアクションを強いない）。
+4. dev-docs/workflow.md（main保護・機能ごと短命ブランチ・1論理変更1コミット・Conventional Commits＋関連decision参照・コミットはユーザー承認後。**コミットはヘッダ=簡潔なWhat／本文=Why・大きなWhyはdecision参照で重複させない／コメント=Why・Why-notでHowの再説明はしない／テスト=What(振る舞いの仕様)** を明記）と dev-docs/ui-ux-guidelines.md（状態網羅・送信中/成功/失敗フィードバック・クライアント+サーバの二重バリデーション・a11y・レスポンシブ・agent-browserで操作可能=隠し要素にアクションを強いない）。
 5. .claude/settings.json: 安全な定型コマンド（git status/diff/add、選定スタックのテスト・lint・ビルド、docker compose、DBマイグレーション等）の allow。Stopフック（実装ソース変更があるセッションで decision 記録 or「記録不要」の明示を促すソフトリマインダ。stop_hook_active で1回のみ、恒久ブロックにしない）。MCP は context7（ライブラリ最新ドキュメント）と、UI検証に使うブラウザ操作系を有効化。
 
 各ファイル作成後、何を作ったか報告し、次に進んでよいか確認を取ってください。最後に、作成した /log-session でこのセッション（フェーズ2）のログを残してください。
@@ -353,7 +355,9 @@ Tier 2 — 二次/タイブレーク
 進め方（CLAUDE.md と dev-docs/ のルールに従う）:
 - main は保護。feat/<name> の短命ブランチで作業する。git commit は私が明示的に指示するまで行わない。
 - TDD厳守: Red(失敗するテストを先に書く) → Green(最小実装で通す) → Refactor(テストは緑のまま整理)。
-- テストの層: 単体(ロジック/バリデーション) → 結合(API+DB) → E2E。対応する docs/evaluation/scenarios/ の受け入れ基準を満たすこと。
+- 実装方針(Action/Calculation/Data): ロジックは純粋な計算(Calculation)に寄せて単体で厚く固め、副作用(Action: DB/セッション/HTTP)は薄く隔離する(functional core / imperative shell)。Data は型で表す。単純さを壊す過剰な層は作らない。
+- テストの層: 単体(純粋な計算=ロジック/バリデーションを厚く) → 結合(API+DB=Action) → E2E。対応する docs/evaluation/scenarios/ の受け入れ基準を満たすこと。
+- 意図の置き場所: コード=How／テスト=What／コミット本文=Why(decision参照)／コメント=Why・Why-not(Howを繰り返さない)。
 - 独自の技術判断をしたら、実装を続ける前に /log-decision で記録する。
 - Definition of Done を満たす: テスト緑 → /verify で実挙動を確認 → UIを触るなら dev-docs/ui-ux-guidelines.md のチェックを満たす（agent-browserで操作可能・隠し要素にアクションを強いない）→ 入力を扱う機能は /security-review を通す。
 - 評価ハーネス前提を壊さない: 空DBから 01→05 を逐次実行でき、シード無し・テスト間でDBを消さない状態を保つ。マイグレーションで再現可能にする。
@@ -400,5 +404,6 @@ dev-docs の成果物を修正・改訂します。
 - **選定軸の罠を塞ぐ定義**: A＝このアプリのエラー面の relevant shift-left 被覆率（型システムの絶対強度でない）。B＝A で取り返せない残余の反復摩擦（cycles-to-green を shift-left と偽らない）。学習価値(E)を正しさ(A)に混ぜない。実現可能性は空の二択ゲートにせず B・C の程度で評価。反復コストの高い案は A の高さで明示的に取り返して見せる。退避条項は置かない。
 - **セッションログは全フェーズで残す**。フェーズ0・1は手書き、フェーズ2で /log-session を作って以降はスキルで。
 - **状態復元**: フェーズごと・機能ごとに新セッションで始めてよい。各フェーズ/実装プロンプトの冒頭で、CLAUDE.md・最新セッションログ・decisions・上流成果物を読ませてから作業に入る。
+- **実装の2原則**（CLAUDE.md／workflow／実装プロンプトに反映済み）: ①Action/Calculation/Data を分け、純粋な計算に寄せて副作用を薄く隔離（functional core / imperative shell。決定的な核はTDDと非決定性制御に直結）。②意図の置き場所＝コード:How／テスト:What／コミット本文:Why(decision参照)／コメント:Why・Why-not(Howを繰り返さない)。いずれも強制の法でなく“既定の型”。
 - **`dev-docs` の名前**を変える場合は全プロンプトで一括置換する。**`docs/` 不可侵**と**セッションログの別系統化**がこの手順の肝。
 ```
